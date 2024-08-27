@@ -1,0 +1,6 @@
+version: '2'
+
+tunnels:
+  web:
+    addr: app:8080
+    proto: http
