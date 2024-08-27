@@ -6,15 +6,19 @@ use Nyholm\Psr7\Factory\Psr17Factory;
 use Spiral\RoadRunner;
 use Symfony\Bridge\PsrHttpMessage\Factory\HttpFoundationFactory;
 use Symfony\Bridge\PsrHttpMessage\Factory\PsrHttpFactory;
+use Symfony\Component\Dotenv\Dotenv;
 use Symfony\Component\HttpFoundation\Request;
 
 require __DIR__ . '/vendor/autoload.php';
+
+$dotEnv = new Dotenv();
+$dotEnv->load(__DIR__ . '/.env');
 
 $worker = RoadRunner\Worker::create();
 
 $psrFactory = new Psr17Factory();
 
-$kernel = new App\Kernel('dev', true);
+$kernel = new App\Kernel($_SERVER['APP_ENV'], true);
 
 $httpFoundationFactory = new HttpFoundationFactory();
 $psrHttpFactory = new PsrHttpFactory($psrFactory, $psrFactory, $psrFactory, $psrFactory);

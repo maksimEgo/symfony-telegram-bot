@@ -48,7 +48,9 @@
         "symfony/var-dumper": "7.1",
         "symfony/var-exporter": "7.1",
         "symfony/yaml": "7.1",
-        "spiral/roadrunner-http": "^3.5"
+        "spiral/roadrunner-http": "^3.5",
+        "longman/telegram-bot": "^0.83.1",
+        "symfony/validator": "7.1"
     },
     "config": {
         "allow-plugins": {

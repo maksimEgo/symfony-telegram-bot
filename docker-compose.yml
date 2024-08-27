@@ -9,6 +9,8 @@ services:
       - .:/app
     environment:
       DATABASE_URL: "postgresql://symfony:symfony@db:5432/symfony"
+      PHP_IDE_CONFIG: serverName=Telegram-Bot
+      XDEBUG_CONFIG: remote_host=host.docker.internal max_nesting_level=250 remote_enable=1 remote_connect_back=0 var_display_max_depth=5 idekey='PHPSTORM'
     depends_on:
       - db
 
@@ -20,6 +22,18 @@ services:
       POSTGRES_DB: symfony
     volumes:
       - pgdata:/var/lib/postgresql/data
+
+  ngrok:
+    image: wernight/ngrok
+    container_name: telegram-ngrok
+    env_file:
+      - .env
+    restart: unless-stopped
+    command: ngrok start --config ngrok.yaml --all --authtoken=${NGROK_TOKEN}
+    ports:
+      - "4040:4040"
+    volumes:
+      - ./ngrok.yaml:/ngrok.yaml
 
 volumes:
   pgdata:

@@ -4,9 +4,12 @@ rpc:
   listen: tcp://127.0.0.1:8080
 server:
   command: "php worker.php"
+  env:
+    - XDEBUG_SESSION: 1
 
 http:
   address: :8080
+  debug: true
   pool:
     num_workers: 4
     max_jobs: 64
