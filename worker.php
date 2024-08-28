@@ -21,7 +21,7 @@ $psrFactory = new Psr17Factory();
 $kernel = new App\Kernel($_SERVER['APP_ENV'], true);
 
 $httpFoundationFactory = new HttpFoundationFactory();
-$psrHttpFactory = new PsrHttpFactory($psrFactory, $psrFactory, $psrFactory, $psrFactory);
+$psrHttpFactory        = new PsrHttpFactory($psrFactory, $psrFactory, $psrFactory, $psrFactory);
 
 $psr7Worker = new RoadRunner\Http\PSR7Worker($worker, $psrFactory, $psrFactory, $psrFactory);
 
@@ -32,11 +32,9 @@ try {
             $symfonyRequest = $httpFoundationFactory->createRequest($req);
 
             $symfonyResponse = $kernel->handle($symfonyRequest);
-
-            $psr7Response = $psrHttpFactory->createResponse($symfonyResponse);
+            $psr7Response    = $psrHttpFactory->createResponse($symfonyResponse);
 
             $psr7Worker->respond($psr7Response);
-
             $kernel->terminate($symfonyRequest, $symfonyResponse);
         } catch (Throwable $throwable) {
             $psr7Worker->getWorker()->error((string)$throwable);
