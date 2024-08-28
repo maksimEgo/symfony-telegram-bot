@@ -22,7 +22,7 @@ class StartCommand extends UserCommand
     public function execute(): ServerResponse
     {
         $message = $this->getMessage();
-        $chat_id = $message->getChat()->getId();
+        $chatId  = $message->getChat()->getId();
 
         $text = 'Hello! Welcome to the Shop bot. Please choose an option:';
 
@@ -35,7 +35,7 @@ class StartCommand extends UserCommand
             ->setSelective(false);
 
         return Request::sendMessage([
-            'chat_id'      => $chat_id,
+            'chat_id'      => $chatId,
             'text'         => $text,
             'reply_markup' => $keyboard,
         ]);

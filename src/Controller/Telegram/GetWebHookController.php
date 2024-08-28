@@ -26,9 +26,9 @@ class GetWebHookController extends AbstractController
     {
         try {
             $botFactory = $this->botFactorySelector->getFactory($request, $botData);
-            $telegram = $botFactory->createBot();
-            $telegram->useGetUpdatesWithoutDatabase();
+            $telegram   = $botFactory->createBot();
 
+            $telegram->useGetUpdatesWithoutDatabase();
             $telegram->addCommandsPath($botFactory->getCommandsPath());
 
             $jsonData = $request->getContent();
@@ -38,7 +38,6 @@ class GetWebHookController extends AbstractController
             }
 
             $telegram->setCustomInput($jsonData);
-
             $telegram->handle();
 
             return new Response('', Response::HTTP_NO_CONTENT);

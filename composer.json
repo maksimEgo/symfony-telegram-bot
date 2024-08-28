@@ -50,7 +50,9 @@
         "symfony/yaml": "7.1",
         "spiral/roadrunner-http": "^3.5",
         "longman/telegram-bot": "^0.83.1",
-        "symfony/validator": "7.1"
+        "symfony/validator": "7.1",
+        "doctrine/orm": "^4.0.x-dev",
+        "doctrine/dbal": "^4"
     },
     "config": {
         "allow-plugins": {
