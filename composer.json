@@ -51,8 +51,9 @@
         "spiral/roadrunner-http": "^3.5",
         "longman/telegram-bot": "^0.83.1",
         "symfony/validator": "7.1",
-        "doctrine/orm": "^4.0.x-dev",
-        "doctrine/dbal": "^4"
+        "doctrine/orm": "^3.0",
+        "doctrine/dbal": "^3.0",
+        "doctrine/doctrine-migrations-bundle": "^3.3"
     },
     "config": {
         "allow-plugins": {
@@ -61,6 +62,7 @@
         }
     },
     "require-dev": {
-        "vimeo/psalm": "^5.25"
+        "vimeo/psalm": "^5.25",
+        "symfony/maker-bundle": "^1.60"
     }
 }

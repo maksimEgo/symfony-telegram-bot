@@ -1,10 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity\Telegram;
 
 use Doctrine\ORM\Mapping as ORM;
 use App\Enum\Telegram\BotType;
 
+#[ORM\Entity]
 class Bot
 {
     #[ORM\Id]
@@ -18,16 +21,16 @@ class Bot
     #[ORM\Column(type: 'string', length: 255)]
     private string $token;
 
-    #[ORM\Column(type: 'boolean')]
+    #[ORM\Column(name: 'is_active', type: 'boolean')]
     private bool $isActive;
 
-    #[ORM\Column(type: 'string', length: 50, enumType: BotType::class)]
+    #[ORM\Column(name: 'bot_type', type: 'string', length: 50, enumType: BotType::class)]
     private BotType $botType;
 
-    #[ORM\Column(type:  'datetime_immutable')]
+    #[ORM\Column(name: 'created_at', type: 'datetime_immutable')]
     private readonly \DateTimeImmutable $createdAt;
 
-    #[ORM\Column(type: 'datetime_immutable')]
+    #[ORM\Column(name: 'updated_at', type: 'datetime_immutable')]
     private \DateTimeImmutable $updatedAt;
 
     public function __construct()
@@ -95,5 +98,10 @@ class Bot
     public function setBotType(BotType $botType): void
     {
         $this->botType = $botType;
+    }
+
+    public function update(): void
+    {
+        $this->updatedAt = new \DateTimeImmutable();
     }
 }
