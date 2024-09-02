@@ -2,6 +2,7 @@ version: "3"
 
 rpc:
   listen: tcp://127.0.0.1:8080
+
 server:
   command: "php worker.php"
   env:
@@ -13,6 +14,15 @@ http:
   pool:
     num_workers: 4
     max_jobs: 64
+
+jobs:
+  consume: [ "default" ]
+  pipelines:
+    default:
+      driver: memory
+      config:
+        priority: 10
+        prefetch: 10
 
 reload:
   interval: 1s
