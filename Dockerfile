@@ -1,8 +1,13 @@
-# Используем PHP с необходимыми расширениями
 FROM ghcr.io/roadrunner-server/roadrunner:2024.2.0 AS roadrunner
 FROM php:8.3-cli
 
 COPY --from=roadrunner /usr/bin/rr /usr/local/bin/rr
+
+ENV GO_VERSION=1.21.1
+RUN curl -OL https://golang.org/dl/go$GO_VERSION.linux-amd64.tar.gz \
+    && tar -C /usr/local -xzf go$GO_VERSION.linux-amd64.tar.gz \
+    && rm go$GO_VERSION.linux-amd64.tar.gz
+ENV PATH=$PATH:/usr/local/go/bin
 
 RUN apt-get update && apt-get install -y \
     git \
