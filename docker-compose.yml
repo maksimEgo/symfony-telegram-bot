@@ -15,11 +15,16 @@ services:
       - database
 
   database:
-    image: postgres:16-alpine
+    image: postgres:${POSTGRES_VERSION:-16}-alpine
     environment:
-      POSTGRES_DB: symfony
-      POSTGRES_PASSWORD: symfony
-      POSTGRES_USER: symfony
+      POSTGRES_DB: ${POSTGRES_DB:-symfony}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-symfony}
+      POSTGRES_USER: ${POSTGRES_USER:-symfony}
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-d", "${POSTGRES_DB:-symfony}", "-U", "${POSTGRES_USER:-symfony}" ]
+      timeout: 5s
+      retries: 5
+      start_period: 60s
     volumes:
       - database_data:/var/lib/postgresql/data:rw
 

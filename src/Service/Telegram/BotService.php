@@ -13,7 +13,8 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
 readonly class BotService
 {
     public function __construct(
-        #[Autowire] private BotRepository $botRepository,
+        #[Autowire(service: BotRepository::class)]
+        private BotRepository $botRepository,
     ) {}
 
     public function getAllBots(): array
