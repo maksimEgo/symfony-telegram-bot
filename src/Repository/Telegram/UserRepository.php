@@ -77,25 +77,17 @@ class UserRepository extends ServiceEntityRepository
 
     public function save(User $user, bool $flush = false): void
     {
-        try {
-            $this->_em->persist($user);
-            if ($flush) {
-                $this->_em->flush();
-            }
-        } catch (Exception $exception) {
-            throw new \RuntimeException('Error saving user: ' . $exception->getMessage());
+        $this->getEntityManager()->persist($user);
+        if ($flush) {
+            $this->getEntityManager()->flush();
         }
     }
 
     public function delete(User $user, bool $flush = false): void
     {
-        try {
-            $this->_em->remove($user);
-            if ($flush) {
-                $this->_em->flush();
-            }
-        } catch (Exception $exception) {
-            throw new \RuntimeException('Error deleting user: ' . $exception->getMessage());
+        $this->getEntityManager()->remove($user);
+        if ($flush) {
+            $this->getEntityManager()->flush();
         }
     }
 
