@@ -13,10 +13,10 @@ final class MainBotFactory implements BotFactoryInterface
     private const string TELEGRAM_COMMAND_PATH = __DIR__ . '/../../../Commands/MainBot/';
 
     public function __construct(
-        #[Autowire('%env(TELEGRAM_BOT_TOKEN)%')]
+        #[Autowire(value: '%env(TELEGRAM_BOT_TOKEN)%')]
         private readonly string $botToken,
 
-        #[Autowire('%env(TELEGRAM_BOT_NAME)%')]
+        #[Autowire(value: '%env(TELEGRAM_BOT_NAME)%')]
         private readonly string $botName
     ) {}
 
