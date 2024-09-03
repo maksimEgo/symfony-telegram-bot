@@ -18,7 +18,7 @@ class User
     private string $userName;
 
     #[ORM\Column(name: 'user_chat_id', type: 'integer', nullable: false)]
-    private string $userChatId;
+    private int $userChatId;
 
     #[ORM\Column(name: 'first_name', type: 'string', length: 255)]
     private string $firstName;
@@ -57,12 +57,12 @@ class User
         $this->userName = $userName;
     }
 
-    public function getUserChatId(): string
+    public function getUserChatId(): int
     {
         return $this->userChatId;
     }
 
-    public function setUserChatId(string $userChatId): void
+    public function setUserChatId(int $userChatId): void
     {
         $this->userChatId = $userChatId;
     }
