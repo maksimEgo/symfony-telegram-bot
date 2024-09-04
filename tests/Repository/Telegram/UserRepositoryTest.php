@@ -4,11 +4,13 @@ namespace Repository\Telegram;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\ClassMetadata;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Doctrine\Persistence\ManagerRegistry;
 use App\Entity\Telegram\User;
 use App\Repository\Telegram\UserRepository;
 
+#[CoversClass(UserRepository::class)]
 class UserRepositoryTest extends TestCase
 {
     private $registry;
