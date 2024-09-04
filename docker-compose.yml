@@ -4,6 +4,8 @@ services:
   app:
     build: .
     working_dir: /app
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     ports:
       - "8080:8080"
     volumes:
@@ -11,9 +13,11 @@ services:
     environment:
       DATABASE_URL: "postgresql://symfony:symfony@database:5432/symfony"
       PHP_IDE_CONFIG: serverName=Telegram-Bot
-      XDEBUG_CONFIG: remote_host=host.docker.internal max_nesting_level=250 remote_enable=1 remote_connect_back=0 var_display_max_depth=5 idekey='PHPSTORM'
+      XDEBUG_CONFIG: remote_host=host.docker.internal
     depends_on:
       - database
+    networks:
+      - app_network
 
   database:
     image: postgres:${POSTGRES_VERSION:-16}-alpine
@@ -28,6 +32,8 @@ services:
       start_period: 60s
     volumes:
       - database_data:/var/lib/postgresql/data:rw
+    networks:
+      - app_network
 
   ngrok:
     image: wernight/ngrok
@@ -40,6 +46,12 @@ services:
       - "4040:4040"
     volumes:
       - ./ngrok.yaml:/ngrok.yaml
+    networks:
+      - app_network
 
 volumes:
   database_data:
+
+networks:
+  app_network:
+    driver: bridge

@@ -1,7 +1,7 @@
 version: "3"
 
 rpc:
-  listen: tcp://127.0.0.1:8080
+  listen: tcp://127.0.0.1:6001
 
 server:
   command: "php worker.php"
@@ -9,11 +9,11 @@ server:
     - XDEBUG_SESSION: 1
 
 http:
-  address: :8080
-  debug: true
+  address: 0.0.0.0:8080
   pool:
-    num_workers: 4
+    num_workers: 1
     max_jobs: 64
+    debug: true
 
 jobs:
   consume: [ "default" ]
