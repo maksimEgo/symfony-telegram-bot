@@ -60,7 +60,7 @@ If you want to contribute to the project, please create a pull request or open a
 
 ## 📄 License
 
-This project is licensed under the [MIT License](LICENSE).
+This project is licensed under the [All Rights Reserved License](LICENSE).
 
 ---
 
