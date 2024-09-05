@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-deployment
+  namespace: default
+  labels:
+    app: myapp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: myapp
+  template:
+    metadata:
+      labels:
+        app: myapp
+    spec:
+      containers:
+        - name: app
+          image: maksimegorov/telegram-bot-app:latest
+          ports:
+            - containerPort: 8080
+          env:
+            - name: DATABASE_URL
+              value: "postgresql://symfony:symfony@database-service:5432/symfony"
+            - name: PHP_IDE_CONFIG
+              value: "serverName=Telegram-Bot"
+            - name: XDEBUG_CONFIG
+              value: "remote_host=host.docker.internal"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: app-service
+  namespace: default
+spec:
+  selector:
+    app: myapp
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+  type: LoadBalancer

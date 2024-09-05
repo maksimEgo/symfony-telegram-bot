@@ -1,6 +1,6 @@
 version: '2'
 
 tunnels:
-  web:
+  my-tunnel:
     addr: app:8080
     proto: http
