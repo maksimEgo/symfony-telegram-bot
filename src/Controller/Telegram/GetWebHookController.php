@@ -6,6 +6,9 @@ namespace App\Controller\Telegram;
 
 use App\Dto\Telegram\Bot\BotRequestData;
 use App\Factory\Telegram\Bot\BotFactorySelector;
+use App\Factory\Telegram\Interfaces\UIInterfaceFactory;
+use App\Service\Telegram\BotService;
+use App\Service\Telegram\WebhookService;
 use Longman\TelegramBot\Exception\TelegramException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -15,11 +18,14 @@ use Symfony\Component\Routing\Attribute\Route;
 class GetWebHookController extends AbstractController
 {
     public function __construct(
-        private readonly BotFactorySelector $botFactorySelector
+        private readonly BotFactorySelector $botFactorySelector,
+        private readonly BotService $botService,
+        private readonly WebhookService $webhookService,
+        private readonly UIInterfaceFactory $interfaceFactory
     ) {}
 
     /**
-     * @throws TelegramException
+     * @throws TelegramException|\JsonException
      */
     #[Route('/webhook', name: 'getWebhook', methods: ['POST', 'GET'])]
     public function index(Request $request, BotRequestData $botData): Response
@@ -37,12 +43,21 @@ class GetWebHookController extends AbstractController
                 throw new TelegramException('Input is empty! The webhook must not be called manually, only by Telegram.');
             }
 
+            [$commandName, $interfaceName] = $this->webhookService->getCommandNaneAndInterfaceName($jsonData);
+            $telegram->setCommandConfig($commandName, [
+                'reply'   => $this->interfaceFactory->getMessageInterface($interfaceName),
+                'buttons' => $this->interfaceFactory->getButtonsInterface($interfaceName),
+            ]);
+            unset($commandName, $interfaceName);
+
             $telegram->setCustomInput($jsonData);
             $telegram->handle();
 
             return new Response('', Response::HTTP_NO_CONTENT);
         } catch (TelegramException $telegramException) {
             throw new TelegramException($telegramException->getMessage());
+        } catch (\JsonException $jsonException) {
+            throw new \JsonException($jsonException->getMessage());
         }
     }
 }

@@ -2,16 +2,18 @@ version: "3"
 
 rpc:
   listen: tcp://127.0.0.1:6001
+  timeout: 60s
 
 server:
   command: "php worker.php"
   env:
-    - XDEBUG_SESSION: 1
+    - XDEBUG_SESSION: 2
+  relay: pipes
 
 http:
   address: 0.0.0.0:8080
   pool:
-    num_workers: 1
+    num_workers: 4
     max_jobs: 64
     debug: true
 

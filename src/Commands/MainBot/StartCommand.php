@@ -24,10 +24,11 @@ class StartCommand extends UserCommand
         $message = $this->getMessage();
         $chatId  = $message->getChat()->getId();
 
-        $text = 'Hello! Welcome to the Main bot. Please choose an option:';
+        $text    = $this->getConfig('reply');
+        $buttons = $this->getConfig('buttons');
 
         $keyboard = new Keyboard(
-            ['🚀 Create Bot']
+            $buttons
         );
 
         $keyboard = $keyboard->setResizeKeyboard(true)
