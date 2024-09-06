@@ -6,9 +6,10 @@ namespace App\Entity\Telegram;
 
 use Doctrine\ORM\Mapping as ORM;
 use App\Enum\Telegram\BotType;
+use JsonSerializable;
 
 #[ORM\Entity]
-class Bot
+class Bot implements JsonSerializable
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -103,5 +104,18 @@ class Bot
     public function update(): void
     {
         $this->updatedAt = new \DateTimeImmutable();
+    }
+
+    public function jsonSerialize(): array
+    {
+        return [
+            'id'        => $this->id,
+            'name'      => $this->name,
+            'token'     => $this->token,
+            'isActive'  => $this->isActive,
+            'botType'   => $this->botType->value,
+            'createdAt' => $this->createdAt->format('Y-m-d H:i:s'),
+            'updatedAt' => $this->updatedAt->format('Y-m-d H:i:s'),
+        ];
     }
 }

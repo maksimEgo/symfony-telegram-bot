@@ -34,6 +34,8 @@ services:
       - database_data:/var/lib/postgresql/data:rw
     networks:
       - app_network
+    ports:
+      - "5432:5432"
 
   ngrok:
     image: wernight/ngrok
