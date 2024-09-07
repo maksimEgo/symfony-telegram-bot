@@ -2,9 +2,11 @@
 
 namespace App\DataFixtures;
 
+use App\Entity\Telegram\Bot;
 use App\Entity\Telegram\InterfaceEntity;
 use App\Entity\Telegram\Keyboard;
 use App\Entity\Telegram\Message;
+use App\Enum\Telegram\BotType;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 
@@ -34,6 +36,12 @@ class AppFixtures extends Fixture
         $createInterface->setName('Create Bot');
         $createInterface->setMessage($createMessage);
         $manager->persist($createInterface);
+
+        $mainBot = new Bot();
+        $mainBot->setName($_ENV['TELEGRAM_BOT_NAME']);
+        $mainBot->setToken($_ENV['TELEGRAM_BOT_TOKEN']);
+        $mainBot->setBotType(BotType::MAIN);
+        $manager->persist($mainBot);
 
         $manager->flush();
     }
