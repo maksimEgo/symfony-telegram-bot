@@ -38,8 +38,8 @@ class AppFixtures extends Fixture
         $manager->persist($createInterface);
 
         $mainBot = new Bot();
-        $mainBot->setName($_ENV['TELEGRAM_BOT_NAME']);
-        $mainBot->setToken($_ENV['TELEGRAM_BOT_TOKEN']);
+        $mainBot->setName(getenv('TELEGRAM_BOT_NAME'));
+        $mainBot->setToken(getenv('TELEGRAM_BOT_TOKEN'));
         $mainBot->setBotType(BotType::MAIN);
         $manager->persist($mainBot);
 

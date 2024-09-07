@@ -10,10 +10,8 @@ services:
       - "8080:8080"
     volumes:
       - .:/app
-    environment:
-      DATABASE_URL: "postgresql://symfony:symfony@database:5432/symfony"
-      PHP_IDE_CONFIG: serverName=Telegram-Bot
-      XDEBUG_CONFIG: remote_host=host.docker.internal
+    env_file:
+      - /.env
     depends_on:
       - database
     networks:
