@@ -7,24 +7,30 @@ namespace App\Controller\Telegram;
 use App\Dto\Telegram\Bot\BotRequestData;
 use App\Factory\Telegram\Bot\BotFactorySelector;
 use App\Factory\Telegram\Interfaces\UIInterfaceFactory;
+use App\Factory\Telegram\State\StateFactory;
 use App\Service\Telegram\WebhookService;
-use JsonException;
+use App\Service\User\UserSessionService;
+use Longman\TelegramBot\Entities\Update;
 use Longman\TelegramBot\Exception\TelegramException;
+use Spiral\RoadRunner\Jobs\Exception\JobsException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use JsonException;
 
 class GetWebHookController extends AbstractController
 {
     public function __construct(
         private readonly BotFactorySelector $botFactorySelector,
         private readonly WebhookService $webhookService,
-        private readonly UIInterfaceFactory $interfaceFactory
+        private readonly UIInterfaceFactory $interfaceFactory,
+        private readonly UserSessionService $userSession,
+        private readonly StateFactory $stateFactory
     ) {}
 
     /**
-     * @throws TelegramException|JsonException
+     * @throws TelegramException|JsonException|JobsException
      */
     #[Route('/webhook', name: 'getWebhook', methods: ['POST', 'GET'])]
     public function index(Request $request, BotRequestData $botData): Response
@@ -42,11 +48,24 @@ class GetWebHookController extends AbstractController
                 throw new TelegramException('Input is empty! The webhook must not be called manually, only by Telegram.');
             }
 
+            $update = json_decode($jsonData, associative: true);
+            $chatId = $update['message']['chat']['id'];
+
+            if ($chatId) {
+                $state = $this->userSession->getState($chatId);
+                if ($state) {
+                    $stateHandler = $this->stateFactory->createStateHandler($state);
+                    $stateHandler->handle(new Update($update));
+                    return new Response(content: '', status: Response::HTTP_NO_CONTENT);
+                }
+            }
+
             [$commandName, $interfaceName] = $this->webhookService->getCommandNaneAndInterfaceName($jsonData);
             $telegram->setCommandConfig($commandName, [
-                'reply'   => $this->interfaceFactory->getMessageInterface($interfaceName),
-                'buttons' => $this->interfaceFactory->getButtonsInterface($interfaceName),
-                'botData' => $botFactory->getBot(),
+                'reply'          => $this->interfaceFactory->getMessageInterface($interfaceName),
+                'buttons'        => $this->interfaceFactory->getButtonsInterface($interfaceName),
+                'botData'        => $botFactory->getBot(),
+                'sessionService' => $this->userSession
             ]);
 
             $telegram->setCustomInput($jsonData);

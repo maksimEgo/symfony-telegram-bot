@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Spiral\RoadRunner;
+use Spiral\RoadRunner\Jobs\Consumer;
+use Spiral\RoadRunner\Environment;
 use Symfony\Bridge\PsrHttpMessage\Factory\HttpFoundationFactory;
 use Symfony\Bridge\PsrHttpMessage\Factory\PsrHttpFactory;
 use Symfony\Component\Dotenv\Dotenv;
@@ -17,28 +19,48 @@ require __DIR__ . '/vendor/autoload.php';
 })();
 
 $worker = RoadRunner\Worker::create();
+$env    = Environment::fromGlobals();
 
-$psrFactory = new Psr17Factory();
+$psrFactory            = new Psr17Factory();
+$httpFoundationFactory = new HttpFoundationFactory();
+$psrHttpFactory        = new PsrHttpFactory($psrFactory, $psrFactory, $psrFactory, $psrFactory);
+
+$psr7Worker    = new RoadRunner\Http\PSR7Worker($worker, $psrFactory, $psrFactory, $psrFactory);
+$queueConsumer = new Consumer($worker);
+
 $kernel = new App\Kernel($_SERVER['APP_ENV'], true);
 
-$httpFoundationFactory = new HttpFoundationFactory();
-$psrHttpFactory = new PsrHttpFactory($psrFactory, $psrFactory, $psrFactory, $psrFactory);
-
-$psr7Worker = new RoadRunner\Http\PSR7Worker($worker, $psrFactory, $psrFactory, $psrFactory);
-
 try {
-    while ($req = $psr7Worker->waitRequest()) {
-        try {
-            /** @var Request $symfonyRequest */
-            $symfonyRequest = $httpFoundationFactory->createRequest($req);
+    while (true) {
+        if ($env->getMode() === RoadRunner\Environment\Mode::MODE_HTTP) {
+            $req = $psr7Worker->waitRequest();
 
-            $symfonyResponse = $kernel->handle($symfonyRequest);
-            $psr7Response = $psrHttpFactory->createResponse($symfonyResponse);
+            if ($req === null) {
+                break;
+            }
 
-            $psr7Worker->respond($psr7Response);
-            $kernel->terminate($symfonyRequest, $symfonyResponse);
-        } catch (Throwable $throwable) {
-            $psr7Worker->getWorker()->error((string)$throwable);
+            try {
+                $symfonyRequest  = $httpFoundationFactory->createRequest($req);
+                $symfonyResponse = $kernel->handle($symfonyRequest);
+                $psr7Response    = $psrHttpFactory->createResponse($symfonyResponse);
+
+                $psr7Worker->respond($psr7Response);
+                $kernel->terminate($symfonyRequest, $symfonyResponse);
+            } catch (Throwable $throwable) {
+                $psr7Worker->getWorker()->error((string) $throwable);
+            }
+        } elseif ($env->getMode() === RoadRunner\Environment\Mode::MODE_JOBS) {
+            $task = $queueConsumer->waitTask();
+
+            if ($task === null) {
+                break;
+            }
+
+            try {
+                $task->ack();
+            } catch (Throwable $e) {
+                $task->nack($e);
+            }
         }
     }
 } catch (Throwable $exception) {
