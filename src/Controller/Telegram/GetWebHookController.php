@@ -7,8 +7,8 @@ namespace App\Controller\Telegram;
 use App\Dto\Telegram\Bot\BotRequestData;
 use App\Factory\Telegram\Bot\BotFactorySelector;
 use App\Factory\Telegram\Interfaces\UIInterfaceFactory;
-use App\Service\Telegram\BotService;
 use App\Service\Telegram\WebhookService;
+use JsonException;
 use Longman\TelegramBot\Exception\TelegramException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -19,13 +19,12 @@ class GetWebHookController extends AbstractController
 {
     public function __construct(
         private readonly BotFactorySelector $botFactorySelector,
-        private readonly BotService $botService,
         private readonly WebhookService $webhookService,
         private readonly UIInterfaceFactory $interfaceFactory
     ) {}
 
     /**
-     * @throws TelegramException|\JsonException
+     * @throws TelegramException|JsonException
      */
     #[Route('/webhook', name: 'getWebhook', methods: ['POST', 'GET'])]
     public function index(Request $request, BotRequestData $botData): Response
@@ -47,17 +46,18 @@ class GetWebHookController extends AbstractController
             $telegram->setCommandConfig($commandName, [
                 'reply'   => $this->interfaceFactory->getMessageInterface($interfaceName),
                 'buttons' => $this->interfaceFactory->getButtonsInterface($interfaceName),
+                'botData' => $botFactory->getBot(),
             ]);
-            unset($commandName, $interfaceName);
 
             $telegram->setCustomInput($jsonData);
             $telegram->handle();
+            unset($commandName, $interfaceName, $jsonData);
 
             return new Response('', Response::HTTP_NO_CONTENT);
         } catch (TelegramException $telegramException) {
             throw new TelegramException($telegramException->getMessage());
-        } catch (\JsonException $jsonException) {
-            throw new \JsonException($jsonException->getMessage());
+        } catch (JsonException $jsonException) {
+            throw new JsonException($jsonException->getMessage());
         }
     }
 }
