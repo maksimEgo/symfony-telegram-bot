@@ -125,6 +125,30 @@
       <path value="$PROJECT_DIR$/vendor/theseer/tokenizer" />
       <path value="$PROJECT_DIR$/vendor/doctrine/doctrine-fixtures-bundle" />
       <path value="$PROJECT_DIR$/vendor/doctrine/data-fixtures" />
+      <path value="$PROJECT_DIR$/vendor/ramsey/uuid" />
+      <path value="$PROJECT_DIR$/vendor/ramsey/collection" />
+      <path value="$PROJECT_DIR$/vendor/spiral/roadrunner-jobs" />
+      <path value="$PROJECT_DIR$/vendor/brick/math" />
+      <path value="$PROJECT_DIR$/vendor/cocur/slugify" />
+      <path value="$PROJECT_DIR$/vendor/google/common-protos" />
+      <path value="$PROJECT_DIR$/vendor/nette/utils" />
+      <path value="$PROJECT_DIR$/vendor/nette/php-generator" />
+      <path value="$PROJECT_DIR$/vendor/psr/simple-cache" />
+      <path value="$PROJECT_DIR$/vendor/spiral/roadrunner-kv" />
+      <path value="$PROJECT_DIR$/vendor/spiral/reactor" />
+      <path value="$PROJECT_DIR$/vendor/spiral/roadrunner-grpc" />
+      <path value="$PROJECT_DIR$/vendor/spiral/roadrunner-bridge" />
+      <path value="$PROJECT_DIR$/vendor/spiral/core" />
+      <path value="$PROJECT_DIR$/vendor/spiral/serializer" />
+      <path value="$PROJECT_DIR$/vendor/spiral/roadrunner-metrics" />
+      <path value="$PROJECT_DIR$/vendor/spiral/roadrunner-tcp" />
+      <path value="$PROJECT_DIR$/vendor/spiral/scaffolder" />
+      <path value="$PROJECT_DIR$/vendor/spiral/files" />
+      <path value="$PROJECT_DIR$/vendor/roadrunner-php/lock" />
+      <path value="$PROJECT_DIR$/vendor/roadrunner-php/app-logger" />
+      <path value="$PROJECT_DIR$/vendor/grpc/grpc" />
+      <path value="$PROJECT_DIR$/vendor/roadrunner-php/centrifugo" />
+      <path value="$PROJECT_DIR$/vendor/predis/predis" />
     </include_path>
   </component>
   <component name="PhpInterpreters">

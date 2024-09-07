@@ -17,15 +17,6 @@ http:
     max_jobs: 64
     debug: true
 
-jobs:
-  consume: [ "default" ]
-  pipelines:
-    default:
-      driver: memory
-      config:
-        priority: 10
-        prefetch: 10
-
 reload:
   interval: 1s
   patterns: [ ".php" ]

@@ -14,6 +14,7 @@ services:
       - /.env
     depends_on:
       - database
+      - redis
     networks:
       - app_network
 
@@ -35,6 +36,15 @@ services:
     ports:
       - "5432:5432"
 
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+    networks:
+      - app_network
+    volumes:
+      - redis_data:/data
+
   ngrok:
     image: wernight/ngrok
     container_name: telegram-ngrok
@@ -51,6 +61,7 @@ services:
 
 volumes:
   database_data:
+  redis_data:
 
 networks:
   app_network:

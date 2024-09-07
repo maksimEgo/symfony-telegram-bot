@@ -8,6 +8,20 @@ services:
         tags:
             - { name: 'controller.argument_value_resolver' }
 
+    Spiral\Goridge\RPC\RPCInterface:
+        class: Spiral\Goridge\RPC\RPC
+        arguments:
+            $relay: '@Spiral\Goridge\RelayInterface'
+
+    Spiral\RoadRunner\Jobs\JobsInterface:
+        class: Spiral\RoadRunner\Jobs\Jobs
+
+    Spiral\Goridge\RelayInterface:
+        class: Spiral\Goridge\SocketRelay
+        arguments:
+            $address: '127.0.0.1'
+            $port: 6001
+
     App\:
         resource: '../src/'
         exclude:
