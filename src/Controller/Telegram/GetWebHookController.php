@@ -12,7 +12,6 @@ use App\Service\Telegram\WebhookService;
 use App\Service\User\UserSessionService;
 use Longman\TelegramBot\Entities\Update;
 use Longman\TelegramBot\Exception\TelegramException;
-use Spiral\RoadRunner\Jobs\Exception\JobsException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -61,9 +60,6 @@ class GetWebHookController extends AbstractController
             }
 
             [$commandName, $interfaceName] = $this->webhookService->getCommandNaneAndInterfaceName($jsonData);
-
-
-
             $telegram->setCommandConfig($commandName, [
                 'reply'          => $this->interfaceFactory->getMessageInterface($interfaceName),
                 'buttons'        => $this->interfaceFactory->getButtonsInterface($interfaceName),

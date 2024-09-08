@@ -8,6 +8,7 @@ use App\Service\User\UserSessionService;
 use Longman\TelegramBot\Commands\SystemCommand;
 use Longman\TelegramBot\Entities\Keyboard;
 use Longman\TelegramBot\Entities\ServerResponse;
+use Longman\TelegramBot\Exception\TelegramException;
 use Longman\TelegramBot\Request;
 
 class GenericmessageCommand extends SystemCommand
@@ -20,11 +21,13 @@ class GenericmessageCommand extends SystemCommand
 
     protected UserSessionService $userSessionService;
 
+    /**
+     * @throws TelegramException
+     */
     public function execute(): ServerResponse
     {
         $message = $this->getMessage();
         $chatId  = $message->getChat()->getId();
-        $text    = $message->getText(true);
 
         $this->userSessionService = $this->getConfig('sessionService');
 
