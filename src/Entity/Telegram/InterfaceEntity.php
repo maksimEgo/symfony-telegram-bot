@@ -3,8 +3,6 @@
 namespace App\Entity\Telegram;
 
 use Doctrine\ORM\Mapping as ORM;
-use App\Entity\Telegram\Message;
-use App\Entity\Telegram\Keyboard;
 
 #[ORM\Entity]
 #[ORM\Table(name: 'interfaces')]
@@ -25,6 +23,9 @@ class InterfaceEntity
     #[ORM\OneToOne(targetEntity: Keyboard::class, cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(name: 'keyboard_id', referencedColumnName: 'id', nullable: true)]
     private ?Keyboard $keyboard = null;
+
+    #[ORM\Column(type: 'string', nullable: true)]
+    private ?string $nextStep = null;
 
     public function getId(): int
     {
@@ -61,5 +62,15 @@ class InterfaceEntity
     {
         $this->keyboard = $keyboard;
         return $this;
+    }
+
+    public function getNextStep(): ?string
+    {
+        return $this->nextStep;
+    }
+
+    public function setNextStep(string $nextStep): void
+    {
+        $this->nextStep = $nextStep;
     }
 }

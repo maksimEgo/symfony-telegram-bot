@@ -35,6 +35,7 @@ class AppFixtures extends Fixture
         $createInterface = new InterfaceEntity();
         $createInterface->setName('Create Bot');
         $createInterface->setMessage($createMessage);
+        $createInterface->setNextStep('WaitingForToken');
         $manager->persist($createInterface);
 
         $mainBot = new Bot();

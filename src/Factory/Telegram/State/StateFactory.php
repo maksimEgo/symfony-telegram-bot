@@ -4,7 +4,6 @@ namespace App\Factory\Telegram\State;
 
 use App\State\Telegram\StateInterface;
 use App\Service\User\UserSessionService;
-use InvalidArgumentException;
 
 readonly class StateFactory
 {
@@ -12,7 +11,7 @@ readonly class StateFactory
         private UserSessionService $userSessionService,
     ) {}
 
-    public function createStateHandler(string $state): StateInterface
+    public function createStateHandler(string $state): ?StateInterface
     {
         $stateClass = 'App\\State\\Telegram\\' . $state . 'State';
 
@@ -20,6 +19,6 @@ readonly class StateFactory
             return new $stateClass($this->userSessionService);
         }
 
-        throw new InvalidArgumentException("State [$state] does not exist.");
+        return null;
     }
 }
