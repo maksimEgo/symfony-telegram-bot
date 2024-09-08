@@ -13,7 +13,7 @@ class InterfaceEntityRepository extends ServiceEntityRepository
         parent::__construct($registry, InterfaceEntity::class);
     }
 
-    public function getByName(string $name): InterfaceEntity
+    public function getByName(string $name): ?InterfaceEntity
     {
         return $this->findOneBy(['name' => $name]);
     }

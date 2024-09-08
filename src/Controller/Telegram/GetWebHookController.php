@@ -30,7 +30,7 @@ class GetWebHookController extends AbstractController
     ) {}
 
     /**
-     * @throws TelegramException|JsonException|JobsException
+     * @throws TelegramException|JsonException
      */
     #[Route('/webhook', name: 'getWebhook', methods: ['POST', 'GET'])]
     public function index(Request $request, BotRequestData $botData): Response
@@ -53,18 +53,22 @@ class GetWebHookController extends AbstractController
 
             if ($chatId) {
                 $state = $this->userSession->getState($chatId);
-                if ($state) {
+                if ($state !== false) {
                     $stateHandler = $this->stateFactory->createStateHandler($state);
-                    $stateHandler->handle(new Update($update));
+                    $stateHandler?->handle(new Update($update));
                     return new Response(content: '', status: Response::HTTP_NO_CONTENT);
                 }
             }
 
             [$commandName, $interfaceName] = $this->webhookService->getCommandNaneAndInterfaceName($jsonData);
+
+
+
             $telegram->setCommandConfig($commandName, [
                 'reply'          => $this->interfaceFactory->getMessageInterface($interfaceName),
                 'buttons'        => $this->interfaceFactory->getButtonsInterface($interfaceName),
                 'botData'        => $botFactory->getBot(),
+                'nextStep'       => $this->interfaceFactory->getNextStep($interfaceName),
                 'sessionService' => $this->userSession
             ]);
 

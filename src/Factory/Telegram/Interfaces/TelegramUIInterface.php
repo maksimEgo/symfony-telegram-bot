@@ -6,7 +6,8 @@ use App\Entity\Telegram\InterfaceEntity;
 
 interface TelegramUIInterface
 {
-    public function createInterface(string $name): InterfaceEntity;
-    public function getMessageInterface(string $name): string;
+    public function createInterface(string $name): ?InterfaceEntity;
+    public function getMessageInterface(string $name): ?string;
     public function getButtonsInterface(string $name): ?array;
+    public function getNextStep(string $name): ?string;
 }

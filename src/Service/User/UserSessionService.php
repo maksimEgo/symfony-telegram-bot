@@ -7,7 +7,7 @@ use Predis\Client;
 class UserSessionService
 {
     private Client $redis;
-    private const SESSION_TTL = 1800;
+    private const int SESSION_TTL = 1800;
 
     public function __construct(
         string $redisHost = 'redis',
@@ -20,19 +20,19 @@ class UserSessionService
         ]);
     }
 
-    public function getState(int $chatId): ?string
+    public function getState(int $chatId): string|bool
     {
         try {
             $state = $this->redis->get("user_state:$chatId");
 
-            if ($state !== false) {
+            if ($state !== null) {
                 $this->redis->del(["user_state:$chatId"]);
                 return $state;
             }
 
-            return null;
+            return false;
         } catch (\Exception $e) {
-            throw new \RuntimeException('Ошибка при получении состояния пользователя: ' . $e->getMessage());
+            throw new \RuntimeException('The error occurred while retrieving the user status: ' . $e->getMessage());
         }
     }
 
@@ -45,7 +45,7 @@ class UserSessionService
                 $this->redis->del(["user_state:$chatId"]);
             }
         } catch (\Exception $e) {
-            throw new \RuntimeException('Ошибка при установке состояния пользователя: ' . $e->getMessage());
+            throw new \RuntimeException('The error occurred while setting the user status: ' . $e->getMessage());
         }
     }
 }

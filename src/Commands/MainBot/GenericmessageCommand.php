@@ -28,11 +28,12 @@ class GenericmessageCommand extends SystemCommand
 
         $this->userSessionService = $this->getConfig('sessionService');
 
-        $reply    = $this->getConfig('reply');
-        $buttons = $this->getConfig('buttons');
+        $reply    = $this->getConfig('reply') ?? 'Unknown command';
+        $buttons  = $this->getConfig('buttons');
+        $nextStep = $this->getConfig('nextStep');
 
-        if ($text === '🚀 Create Bot') {
-            $this->userSessionService->setState($chatId, 'WaitingForToken');
+        if ($nextStep !== null) {
+            $this->userSessionService->setState($chatId, $nextStep);
         }
 
         if ($buttons) {
