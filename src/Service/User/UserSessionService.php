@@ -3,6 +3,7 @@
 namespace App\Service\User;
 
 use Predis\Client;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 class UserSessionService
 {
@@ -10,8 +11,11 @@ class UserSessionService
     private const int SESSION_TTL = 1800;
 
     public function __construct(
-        string $redisHost = 'redis',
-        int $redisPort = 6379
+        #[Autowire(value: '%env(REDIS_HOST)%')]
+        string $redisHost,
+
+        #[Autowire(value: '%env(REDIS_PORT)%')]
+        int $redisPort
     ) {
         $this->redis = new Client([
             'scheme' => 'tcp',
