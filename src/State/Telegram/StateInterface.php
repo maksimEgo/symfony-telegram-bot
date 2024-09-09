@@ -6,5 +6,7 @@ use Longman\TelegramBot\Entities\Update;
 
 interface StateInterface
 {
-    public function handle(Update $update);
+    public function handle(Update $update): void;
+    public function setConfig(array $config): self;
+    public function getConfig(): ?array;
 }

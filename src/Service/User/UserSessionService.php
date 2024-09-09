@@ -24,7 +24,7 @@ class UserSessionService
         ]);
     }
 
-    public function getState(int $chatId): string|bool
+    public function getState(int $chatId): ?string
     {
         try {
             $state = $this->redis->get("user_state:$chatId");

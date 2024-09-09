@@ -47,30 +47,32 @@ class GetWebHookController extends AbstractController
                 throw new TelegramException('Input is empty! The webhook must not be called manually, only by Telegram.');
             }
 
-            $update = json_decode($jsonData, associative: true);
+            [$commandName, $interfaceName] = $this->webhookService->getCommandNaneAndInterfaceName($jsonData);
+            $dataConfig = [
+                    'reply'          => $this->interfaceFactory->getMessageInterface($interfaceName),
+                    'buttons'        => $this->interfaceFactory->getButtonsInterface($interfaceName),
+                    'nextStep'       => $this->interfaceFactory->getNextStep($interfaceName),
+                    'botData'        => $botFactory->getBot(),
+                    'sessionService' => $this->userSession
+            ];
+
+            $update = json_decode($jsonData, associative: true, depth: 512, flags: JSON_THROW_ON_ERROR);
             $chatId = $update['message']['chat']['id'];
 
             if ($chatId) {
                 $state = $this->userSession->getState($chatId);
-                if ($state !== false) {
+                if ($state) {
                     $stateHandler = $this->stateFactory->createStateHandler($state);
-                    $stateHandler?->handle(new Update($update));
+                    $stateHandler?->setConfig($dataConfig)->initialize()->handle(new Update($update));
                     return new Response(content: '', status: Response::HTTP_NO_CONTENT);
                 }
             }
-
-            [$commandName, $interfaceName] = $this->webhookService->getCommandNaneAndInterfaceName($jsonData);
-            $telegram->setCommandConfig($commandName, [
-                'reply'          => $this->interfaceFactory->getMessageInterface($interfaceName),
-                'buttons'        => $this->interfaceFactory->getButtonsInterface($interfaceName),
-                'botData'        => $botFactory->getBot(),
-                'nextStep'       => $this->interfaceFactory->getNextStep($interfaceName),
-                'sessionService' => $this->userSession
-            ]);
+            $telegram->setCommandConfig($commandName, $dataConfig);
 
             $telegram->setCustomInput($jsonData);
             $telegram->handle();
-            unset($commandName, $interfaceName, $jsonData);
+
+            unset($commandName, $interfaceName, $jsonData, $dataConfig, $update, $chatId);
 
             return new Response('', Response::HTTP_NO_CONTENT);
         } catch (TelegramException $telegramException) {
