@@ -6,7 +6,6 @@ namespace App\Controller\Telegram;
 
 use App\Dto\Telegram\Bot\BotRequestData;
 use App\Factory\Telegram\Bot\BotFactorySelector;
-use App\Factory\Telegram\Interfaces\UIInterfaceFactory;
 use App\Factory\Telegram\State\StateFactory;
 use App\Service\Telegram\WebhookService;
 use App\Service\User\UserSessionService;
@@ -23,7 +22,6 @@ class GetWebHookController extends AbstractController
     public function __construct(
         private readonly BotFactorySelector $botFactorySelector,
         private readonly WebhookService $webhookService,
-        private readonly UIInterfaceFactory $interfaceFactory,
         private readonly UserSessionService $userSession,
         private readonly StateFactory $stateFactory
     ) {}
@@ -48,14 +46,6 @@ class GetWebHookController extends AbstractController
             }
 
             [$commandName, $interfaceName] = $this->webhookService->getCommandNaneAndInterfaceName($jsonData);
-            $dataConfig = [
-                    'reply'          => $this->interfaceFactory->getMessageInterface($interfaceName),
-                    'buttons'        => $this->interfaceFactory->getButtonsInterface($interfaceName),
-                    'nextStep'       => $this->interfaceFactory->getNextStep($interfaceName),
-                    'botData'        => $botFactory->getBot(),
-                    'sessionService' => $this->userSession
-            ];
-
             $update = json_decode($jsonData, associative: true, depth: 512, flags: JSON_THROW_ON_ERROR);
             $chatId = $update['message']['chat']['id'];
 
@@ -63,15 +53,21 @@ class GetWebHookController extends AbstractController
                 $state = $this->userSession->getState($chatId);
                 if ($state) {
                     $stateHandler = $this->stateFactory->createStateHandler($state);
-                    $stateHandler?->setConfig($dataConfig)->initialize()->handle(new Update($update));
+
+                    $stateHandler?->setConfig(
+                        $this->webhookService->getCommandData($state, $botFactory->getBot()))
+                            ->initialize()->handle(new Update($update)
+                        );
+                    unset($state);
                     return new Response(content: '', status: Response::HTTP_NO_CONTENT);
                 }
             }
-            $telegram->setCommandConfig($commandName, $dataConfig);
+            $telegram->setCommandConfig($commandName, $this->webhookService
+                ->getCommandData($interfaceName, $botFactory->getBot())
+            );
 
             $telegram->setCustomInput($jsonData);
             $telegram->handle();
-
             unset($commandName, $interfaceName, $jsonData, $dataConfig, $update, $chatId);
 
             return new Response('', Response::HTTP_NO_CONTENT);

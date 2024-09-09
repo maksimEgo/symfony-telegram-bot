@@ -7,11 +7,11 @@ use App\Service\User\UserSessionService;
 
 abstract class AbstractState
 {
-    private ?array $config;
-    protected ?string $reply;
-    protected ?array $buttons;
+    private   ?array  $config;
+    protected string $reply;
+    protected ?array  $buttons;
     protected ?string $nextStep;
-    protected ?Bot $botData;
+    protected ?Bot    $botData;
     protected ?UserSessionService $sessionService;
 
     public function setConfig(array $config): StateInterface

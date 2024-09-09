@@ -38,6 +38,16 @@ class AppFixtures extends Fixture
         $createInterface->setNextStep('WaitingForToken');
         $manager->persist($createInterface);
 
+        $tokenMessage = new Message();
+        $tokenMessage->setText('Please send token bot name.');
+        $manager->persist($tokenMessage);
+
+        $waitingForTokenInterface = new InterfaceEntity();
+        $waitingForTokenInterface->setName('WaitingForToken');
+        $waitingForTokenInterface->setMessage($tokenMessage);
+        $waitingForTokenInterface->setNextStep('WaitBotName');
+        $manager->persist($waitingForTokenInterface);
+
         $mainBot = new Bot();
         $mainBot->setName(getenv('TELEGRAM_BOT_NAME'));
         $mainBot->setToken(getenv('TELEGRAM_BOT_TOKEN'));

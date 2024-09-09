@@ -2,6 +2,8 @@
 
 namespace App\State\Telegram;
 
+use Longman\TelegramBot\Entities\Keyboard;
+use Longman\TelegramBot\Entities\ServerResponse;
 use Longman\TelegramBot\Entities\Update;
 use Longman\TelegramBot\Request;
 use App\Service\User\UserSessionService;
@@ -12,18 +14,34 @@ class WaitingForTokenState extends AbstractState implements StateInterface
         private readonly UserSessionService $userSession
     ) {}
 
-    public function handle(Update $update): void
+    public function handle(Update $update): ServerResponse
     {
         $message = $update->getMessage();
         $chatId  = $message->getChat()->getId();
         $text    = $message->getText();
 
-        $this->userSession->setState($chatId, 'ready');
-        $responseText = 'Token is save.';
+        $reply    = $this->reply;
+        $buttons  = $this->buttons;
+        $nextStep = $this->nextStep;
 
-        Request::sendMessage([
-            'chat_id' => $chatId,
-            'text' => $responseText
+        if ($nextStep !== null) {
+            $this->userSession->setState($chatId, $nextStep);
+        }
+
+        if ($buttons) {
+            $keyboard = new Keyboard(
+                $buttons
+            );
+
+            $keyboard = $keyboard->setResizeKeyboard(true)
+                ->setOneTimeKeyboard(true)
+                ->setSelective(false);
+        }
+
+        return Request::sendMessage([
+            'chat_id'      => $chatId,
+            'text'         => $reply,
+            'reply_markup' => $keyboard ?? null,
         ]);
     }
 }
