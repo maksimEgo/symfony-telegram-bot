@@ -9,17 +9,20 @@ use App\Enum\Telegram\BotType;
 use JsonSerializable;
 
 #[ORM\Entity]
+#[ORM\Table(name: 'bot',)]
+#[ORM\UniqueConstraint(name: 'unique_name', columns: ['name'])]
+#[ORM\UniqueConstraint(name: 'unique_token', columns: ['token'])]
 class Bot implements JsonSerializable
 {
     #[ORM\Id]
-    #[ORM\GeneratedValue]
+    #[ORM\GeneratedValue(strategy: 'SEQUENCE')]
     #[ORM\Column(type: 'integer')]
     private readonly int $id;
 
-    #[ORM\Column(type: 'string', length: 255)]
+    #[ORM\Column(type: 'string', length: 255, unique: true)]
     private string $name;
 
-    #[ORM\Column(type: 'string', length: 255)]
+    #[ORM\Column(type: 'string', length: 255, unique: true)]
     private string $token;
 
     #[ORM\Column(name: 'is_active', type: 'boolean')]

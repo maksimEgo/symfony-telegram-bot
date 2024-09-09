@@ -6,10 +6,12 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity]
 #[ORM\Table(name: 'interfaces')]
+#[ORM\Index(name: 'idx_message_id', columns: ['message_id'])]
+#[ORM\Index(name: 'idx_keyboard_id', columns: ['keyboard_id'])]
 class InterfaceEntity
 {
     #[ORM\Id]
-    #[ORM\GeneratedValue]
+    #[ORM\GeneratedValue(strategy: 'SEQUENCE')]
     #[ORM\Column(type: 'integer')]
     private readonly int $id;
 
@@ -17,11 +19,11 @@ class InterfaceEntity
     private string $name;
 
     #[ORM\OneToOne(targetEntity: Message::class, cascade: ['persist', 'remove'])]
-    #[ORM\JoinColumn(name: 'message_id', referencedColumnName: 'id', nullable: false)]
+    #[ORM\JoinColumn(name: 'message_id', referencedColumnName: 'id', unique: true, nullable: false)]
     private Message $message;
 
     #[ORM\OneToOne(targetEntity: Keyboard::class, cascade: ['persist', 'remove'])]
-    #[ORM\JoinColumn(name: 'keyboard_id', referencedColumnName: 'id', nullable: true)]
+    #[ORM\JoinColumn(name: 'keyboard_id', referencedColumnName: 'id', unique: true, nullable: true)]
     private ?Keyboard $keyboard = null;
 
     #[ORM\Column(type: 'string', nullable: true)]
