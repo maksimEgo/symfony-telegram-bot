@@ -6,10 +6,10 @@ use Longman\TelegramBot\Entities\Update;
 use Longman\TelegramBot\Request;
 use App\Service\User\UserSessionService;
 
-readonly class WaitingForTokenState implements StateInterface
+class WaitingForTokenState extends AbstractState implements StateInterface
 {
     public function __construct(
-        private UserSessionService $userSession
+        private readonly UserSessionService $userSession
     ) {}
 
     public function handle(Update $update): void
