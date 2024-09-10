@@ -46,29 +46,27 @@ class GetWebHookController extends AbstractController
             }
 
             [$commandName, $interfaceName] = $this->webhookService->getCommandNaneAndInterfaceName($jsonData);
-            $update = json_decode($jsonData, associative: true, depth: 512, flags: JSON_THROW_ON_ERROR);
-            $chatId = $update['message']['chat']['id'];
+
+            $update  = json_decode($jsonData, associative: true, depth: 512, flags: JSON_THROW_ON_ERROR);
+            $chatId  = $update['message']['chat']['id'];
+            $botData = $botFactory->getBot();
 
             if ($chatId) {
                 $state = $this->userSession->getState($chatId);
                 if ($state) {
                     $stateHandler = $this->stateFactory->createStateHandler($state);
-
-                    $stateHandler?->setConfig(
-                        $this->webhookService->getCommandData($state, $botFactory->getBot()))
-                            ->initialize()->handle(new Update($update)
-                        );
-                    unset($state);
+                    $stateData = $this->webhookService->getCommandData($state, $botData);
+                    $stateHandler?->setConfig($stateData)->initialize()->handle(new Update($update));
+                    unset($state, $stateData);
                     return new Response(content: '', status: Response::HTTP_NO_CONTENT);
                 }
             }
-            $telegram->setCommandConfig($commandName, $this->webhookService
-                ->getCommandData($interfaceName, $botFactory->getBot())
-            );
+            $commandData = $this->webhookService->getCommandData($interfaceName, $botData);
+            $telegram->setCommandConfig($commandName, $commandData);
 
             $telegram->setCustomInput($jsonData);
             $telegram->handle();
-            unset($commandName, $interfaceName, $jsonData, $dataConfig, $update, $chatId);
+            unset($commandName, $interfaceName, $jsonData, $dataConfig, $update, $chatId, $commandData);
 
             return new Response('', Response::HTTP_NO_CONTENT);
         } catch (TelegramException $telegramException) {

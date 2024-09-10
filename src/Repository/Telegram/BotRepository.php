@@ -31,9 +31,23 @@ class BotRepository extends ServiceEntityRepository
         return $this->findOneBy(['token' => $token]);
     }
 
-    public function getByName(string $name): ?Bot
+    /**
+     * @param string $name
+     * @return Bot
+     */
+    public function getByName(string $name): Bot
     {
-        return $this->findOneBy(['name' => $name]);
+        $bot = $this->findOneBy(['name' => $name]);
+
+        if (!$bot instanceof Bot) {
+            throw new \RuntimeException('Expected instance of Bot, got '
+                . (is_object($bot)
+                    ? get_class($bot)
+                    : gettype($bot))
+            );
+        }
+
+        return $bot;
     }
 
     public function getByBotType(BotType $botType): ?Bot

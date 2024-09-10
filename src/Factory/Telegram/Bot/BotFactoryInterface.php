@@ -9,7 +9,18 @@ use Longman\TelegramBot\Telegram;
 
 interface BotFactoryInterface
 {
+    /**
+     * @return Telegram
+     */
     public function createBot(): Telegram;
+
+    /**
+     * @return string
+     */
     public function getCommandsPath(): string;
+
+    /**
+     * @return Bot
+     */
     public function getBot(): Bot;
 }
