@@ -58,6 +58,10 @@ readonly class BotService
         return $bot;
     }
 
+    /**
+     * @param string $name
+     * @return Bot
+     */
     public function getBotByName(string $name): Bot
     {
         $bot = $this->botRepository->getByName($name);

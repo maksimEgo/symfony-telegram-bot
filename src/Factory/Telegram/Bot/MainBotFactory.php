@@ -37,6 +37,9 @@ final class MainBotFactory implements BotFactoryInterface
         return self::TELEGRAM_COMMAND_PATH;
     }
 
+    /**
+     * @return Bot
+     */
     public function getBot(): Bot
     {
         return $this->botService->getBotByName($this->botName);
