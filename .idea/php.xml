@@ -149,6 +149,7 @@
       <path value="$PROJECT_DIR$/vendor/grpc/grpc" />
       <path value="$PROJECT_DIR$/vendor/roadrunner-php/centrifugo" />
       <path value="$PROJECT_DIR$/vendor/predis/predis" />
+      <path value="$PROJECT_DIR$/vendor/baldinof/roadrunner-bundle" />
     </include_path>
   </component>
   <component name="PhpInterpreters">

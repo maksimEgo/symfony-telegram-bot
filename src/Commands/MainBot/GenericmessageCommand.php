@@ -36,7 +36,7 @@ class GenericmessageCommand extends SystemCommand
         $nextStep = $this->getConfig('nextStep');
 
         if ($nextStep !== null) {
-            $this->userSessionService->setState($chatId, $nextStep);
+            $this->userSessionService->setData($chatId, 'state', $nextStep);
         }
 
         if ($buttons) {

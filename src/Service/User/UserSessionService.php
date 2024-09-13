@@ -24,32 +24,66 @@ class UserSessionService
         ]);
     }
 
-    public function getState(int $chatId): ?string
+    public function setData(int $chatId, string $key, mixed $value): void
     {
         try {
-            $state = $this->redis->get("user_state:$chatId");
+            $sessionKey = "user_session:$chatId";
 
-            if ($state !== null) {
-                $this->redis->del(["user_state:$chatId"]);
-                return $state;
-            }
+            $sessionData = $this->getSessionData($chatId);
 
-            return false;
+            $sessionData[$key] = $value;
+
+            $this->redis->setex($sessionKey, self::SESSION_TTL, json_encode($sessionData));
         } catch (\Exception $e) {
-            throw new \RuntimeException('The error occurred while retrieving the user status: ' . $e->getMessage());
+            throw new \RuntimeException('Error installing user data: ' . $e->getMessage());
         }
     }
 
-    public function setState(int $chatId, ?string $state): void
+    public function getData(int $chatId, string $key): ?string
     {
         try {
-            if ($state !== null) {
-                $this->redis->setex("user_state:$chatId", self::SESSION_TTL, $state);
-            } else {
-                $this->redis->del(["user_state:$chatId"]);
-            }
+            $sessionData = $this->getSessionData($chatId);
+            $this->removeData($chatId, $key);
+
+            return $sessionData[$key] ?? null;
         } catch (\Exception $e) {
-            throw new \RuntimeException('The error occurred while setting the user status: ' . $e->getMessage());
+            throw new \RuntimeException('Error retrieving user data: ' . $e->getMessage());
+        }
+    }
+
+    private function removeData(int $chatId, string $key): void
+    {
+        try {
+            $sessionKey = "user_session:$chatId";
+
+            $sessionData = $this->getSessionData($chatId);
+
+            unset($sessionData[$key]);
+
+            $this->redis->setex($sessionKey, self::SESSION_TTL, json_encode($sessionData));
+        } catch (\Exception $e) {
+            throw new \RuntimeException('Ошибка при удалении данных пользователя: ' . $e->getMessage());
+        }
+    }
+
+    private function getSessionData(int $chatId): array
+    {
+        try {
+            $sessionKey = "user_session:$chatId";
+            $sessionData = $this->redis->get($sessionKey);
+
+            return $sessionData ? json_decode($sessionData, true) : [];
+        } catch (\Exception $e) {
+            throw new \RuntimeException('Ошибка при получении данных сессии пользователя: ' . $e->getMessage());
+        }
+    }
+
+    public function clearSession(int $chatId): void
+    {
+        try {
+            $this->redis->del(["user_session:$chatId"]);
+        } catch (\Exception $e) {
+            throw new \RuntimeException('Ошибка при очистке сессии пользователя: ' . $e->getMessage());
         }
     }
 }
