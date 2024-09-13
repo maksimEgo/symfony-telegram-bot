@@ -29,7 +29,7 @@ class AppFixtures extends Fixture
         $manager->persist($startInterface);
 
         $createMessage = new Message();
-        $createMessage->setText('Please send your bot name.');
+        $createMessage->setText('Please send your token.');
         $manager->persist($createMessage);
 
         $createInterface = new InterfaceEntity();
@@ -39,7 +39,7 @@ class AppFixtures extends Fixture
         $manager->persist($createInterface);
 
         $tokenMessage = new Message();
-        $tokenMessage->setText('Please send token bot name.');
+        $tokenMessage->setText('Please send bot name.');
         $manager->persist($tokenMessage);
 
         $waitingForTokenInterface = new InterfaceEntity();
@@ -47,6 +47,15 @@ class AppFixtures extends Fixture
         $waitingForTokenInterface->setMessage($tokenMessage);
         $waitingForTokenInterface->setNextStep('WaitBotName');
         $manager->persist($waitingForTokenInterface);
+
+        $botAdd = new Message();
+        $botAdd->setText('The bot has been added to our system!');
+        $manager->persist($botAdd);
+
+        $addBotName = new InterfaceEntity();
+        $addBotName->setName('WaitBotName');
+        $addBotName->setMessage($botAdd);
+        $manager->persist($addBotName);
 
         $mainBot = new Bot();
         $mainBot->setName(getenv('TELEGRAM_BOT_NAME'));

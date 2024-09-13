@@ -25,9 +25,13 @@ class WaitingForTokenState extends AbstractState implements StateInterface
         $nextStep = $this->nextStep;
 
         if ($nextStep !== null) {
-            $this->userSession->setState($chatId, $nextStep);
+            $this->userSession->setData($chatId, 'state', $nextStep);
         }
 
+        if ($text) {
+            $this->userSession->setData($chatId, 'token', $text);
+        }
+        
         if ($buttons) {
             $keyboard = new Keyboard(
                 $buttons

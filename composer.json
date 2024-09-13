@@ -57,7 +57,8 @@
         "spiral/roadrunner-jobs": "^4.6",
         "spiral/goridge": "^4.2",
         "spiral/roadrunner-bridge": "^3.7",
-        "predis/predis": "^2.2"
+        "predis/predis": "^2.2",
+        "baldinof/roadrunner-bundle": "^3.1"
     },
     "config": {
         "allow-plugins": {
